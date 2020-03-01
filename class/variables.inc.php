@@ -6,7 +6,7 @@ Class Dimensions{
 
     }
 
-    function CleanString($dimensionArray = array()){
+    function split_dimension_to_array($dimensionArray = array()){
         $this->dimensionArray = $dimensionArray;
         $row = $this->dimensionArray;
         $trimStr = preg_replace("/( )/", "",$row['Description_2']); //removes all ctype_space
@@ -31,8 +31,9 @@ Class Dimensions{
             }else{
                 $finDescription = $newDescription;
             }
-            
-            str_replace("%mm", "", $finDescription);
+
+            $finDescription = floatval(str_replace("mm", "", $finDescription));
+            #echo $finDescription."<br>";
             array_push($dimension, $finDescription);
 
 

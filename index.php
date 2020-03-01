@@ -52,7 +52,7 @@ echo $purchases_numrows."<br>";
 					$rowDimension = new Dimensions();
 					foreach ($rows as $row) {
 						#line below is still in progress#
-						$dimensions = $rowDimension->CleanString($row);
+						$dimensions = $rowDimension->split_dimension_to_array($row);
 								
 						echo "<tr>
 								  <td style='width: 8%'>{$row['Doc_No']}</td>
@@ -62,9 +62,9 @@ echo $purchases_numrows."<br>";
 								  <td>{$dimensions['0']}</td>
 								  <td>{$dimensions['1']}</td>
 								  <td>{$dimensions['2']}</td>
-								  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td> 
-								  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td>
-								  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td> 
+								  <td><a href='delete-purchases.php?id={$row['id']}' class='btn btn-danger'>Delete</a></td> 
+								  <td><a href='update-purchases.php?id={$row['id']}' class='btn btn-info'>Edit</a></td>
+								  <td><a href='details-purchases.php?id={$row['id']}' class='btn btn-primary'>Details</a></td> 
 								  </tr>
 
 								";
