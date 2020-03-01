@@ -18,7 +18,14 @@ Class Purchases{
 
 	function purchases_list_type2($type){
 		$qrType = '"%'.$type.'%"';
-		$qr = "SELECT * FROM purchase WHERE Item_Code LIKE {$qrType} ORDER BY id";
+		$qr = "SELECT * FROM purchase 
+			   LEFT JOIN material
+			   ON purchase.Item_Code = material.material
+			   WHERE purchase.Item_Code LIKE {$qrType} 
+			   AND 
+			   purchase.Description_2 NOT LIKE '%Dia%'
+			   AND
+			   purchase.Description_2 NOT LIKE '%od%'";
 		echo $qr."<br>";
 
 		$objSQL = new SQL($qr);

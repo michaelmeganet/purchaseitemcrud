@@ -1,4 +1,47 @@
 <?php
+Class Dimensions{
+
+    protected $dimensionArray;
+    function __construct(){
+
+    }
+
+    function CleanString($dimensionArray = array()){
+        $this->dimensionArray = $dimensionArray;
+        $row = $this->dimensionArray;
+        $trimStr = preg_replace("/( )/", "",$row['Description_2']); //removes all ctype_space
+        #echo $trimStr."<br>";
+        $lowerStr = strtolower($trimStr);
+        #$matches = preg_match("//", subject)
+        $splitDescription = preg_split("/(x|X)/", $lowerStr); //makes the string lowercase, and separate each by 'X'
+        $dimension = [];
+        foreach ($splitDescription as $value) { 
+
+            if (($pos = strpos($value, ':')) !== false) { //--> check if there's any other character besides dimensions
+                $newDescription = substr($value, $pos+1) ;
+
+            }else{
+                $newDescription = $value;
+            }
+
+            if (substr($newDescription,-2) == "ft") {
+                $strLen = strlen($newDescription);
+                $numStr = substr($newDescription,0,$strLen-2);
+                $finDescription = (floatval($numStr)*304.80)."mm";
+            }else{
+                $finDescription = $newDescription;
+            }
+            
+            str_replace("%mm", "", $finDescription);
+            array_push($dimension, $finDescription);
+
+
+                #echo $newDescription."<br>";
+                #echo $lowerStr." Has been separated into : (".$splitDescription['0'].") (".$splitDescription['1'].") (".$splitDescription['2'].")<br>";
+        }   
+        return $dimension;
+    }
+}
 
 Class SQL extends Dbh {
 
@@ -27,7 +70,7 @@ Class SQL extends Dbh {
             // do nothing;
             //echo "no result on SQL <br>";
         }
-        
+
         return $resultset;
     }
 

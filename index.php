@@ -1,6 +1,7 @@
 <?php
 include "header.php";
 include_once "class/purchases.inc.php";
+include_once "class/variables.inc.php";
 
 #create new object
 $purchases = new Purchases();
@@ -39,31 +40,35 @@ echo $purchases_numrows."<br>";
 				<th>Company Name</th>
 				<th>Item Code</th>
 				<th>Description</th>
-				<th>test split</th>
+				<th>Size1</th>
+				<th>Size2</th>
+				<th>Size3</th>
 				<th>Action</th>
 			</thead>
 			<tbody>
 				<?php
 				if ($purchases_numrows>0) {
 					$rows = $purchases_list;
+					$rowDimension = new Dimensions();
 					foreach ($rows as $row) {
 						#line below is still in progress#
-						$lowerStr = strtolower($row['Description_2']);
-						$splitDescription = preg_split("/(x|X)/", $lowerStr); //makes the string lowercase, and separate each by 'X'
-						echo $lowerStr." Has been separated into : (".$splitDescription['0'].") (".$splitDescription['1'].") (".$splitDescription['2'].")<br>";
-						
-					echo "<tr>
-						  <td style='width: 8%'>{$row['Doc_No']}</td>
-						  <td style='width: 40%'>{$row['Company_Name']}</td>
-						  <td style='width: 12%'>{$row['Item_Code']}</td>
-						  <td>{$row['Description_2']}</td>
-						  <td>{$splitDescription['0']} and {{$splitDescription['1']} and {{$splitDescription['2']}</td>
-						  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td> 
-						  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td>
-						  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td> 
-						  </tr>
+						$dimensions = $rowDimension->CleanString($row);
+								
+						echo "<tr>
+								  <td style='width: 8%'>{$row['Doc_No']}</td>
+								  <td style='width: 37%'>{$row['Company_Name']}</td>
+								  <td style='width: 12%'>{$row['Item_Code']}</td>
+								  <td>{$row['Description_2']}</td>
+								  <td>{$dimensions['0']}</td>
+								  <td>{$dimensions['1']}</td>
+								  <td>{$dimensions['2']}</td>
+								  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td> 
+								  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td>
+								  <td><a href='delete-purchases.php?id={$row['id']}' class=''>Delete</a></td> 
+								  </tr>
 
-							";	
+								";
+					
 					}
 				}
 				?>
