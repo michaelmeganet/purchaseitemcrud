@@ -15,6 +15,16 @@ Class Purchases{
 		$result = $objSQL->getResultRowArray();
 		return $result;
 	}
+
+	function purchases_list_type2($type){
+		$qrType = '"%'.$type.'%"';
+		$qr = "SELECT * FROM purchase WHERE Item_Code LIKE {$qrType} ORDER BY id";
+		echo $qr."<br>";
+
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getResultRowArray();
+		return $result;
+	}
 	function purchases_list_type($type){
 
 		if (is_null($type)) {
@@ -22,7 +32,6 @@ Class Purchases{
 		}else{
 			$qrType = "= '".$type."'";
 		}
-
 		$qr = "SELECT *, material.shaft, material.shaftindicator FROM purchase LEFT JOIN material ON purchase.Item_Code = material.material WHERE material.shaftindicator {$qrType}  ORDER BY id ASC ";
 
 		echo $qr."<br>";
@@ -44,7 +53,14 @@ Class Purchases{
 		$result = $objSQL->getRowCount();
 		return $result;
 	}
-
+	function purchases_list_numrows_type2($type){
+		$qrType = '"%'.$type.'%"';
+		$qr = "SELECT COUNT(*) FROM purchase WHERE Item_Code LIKE {$qrType} ORDER BY id";
+		echo $qr."<br>";
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getRowCount();
+		return $result;
+	}
 	function purchases_list_numrows_type($type){
 		if (is_null($type)) {
 			$qrType = "IS NULL";

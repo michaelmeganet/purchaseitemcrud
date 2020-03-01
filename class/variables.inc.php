@@ -27,7 +27,7 @@ Class SQL extends Dbh {
             // do nothing;
             //echo "no result on SQL <br>";
         }
-
+        
         return $resultset;
     }
 
