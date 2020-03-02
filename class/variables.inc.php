@@ -9,37 +9,43 @@ Class Dimensions{
     function split_dimension_to_array($dimensionArray = array()){
         $this->dimensionArray = $dimensionArray;
         $row = $this->dimensionArray;
-        $trimStr = preg_replace("/( )/", "",$row['Description_2']); //removes all ctype_space
+        $trimStr = preg_replace("/( )/", "",$row['Description_2']); //removes all space
         #echo $trimStr."<br>";
         $lowerStr = strtolower($trimStr);
         #$matches = preg_match("//", subject)
         $splitDescription = preg_split("/(x|X)/", $lowerStr); //makes the string lowercase, and separate each by 'X'
+        #print_r($splitDescription);
         $dimension = [];
         foreach ($splitDescription as $value) { 
 
             if (($pos = strpos($value, ':')) !== false) { //--> check if there's any other character besides dimensions
-                $newDescription = substr($value, $pos+1) ;
+                $newStr = substr($value, $pos+1) ;
 
             }else{
-                $newDescription = $value;
+                $newStr = $value;
             }
-
-            if (substr($newDescription,-2) == "ft") {
-                $strLen = strlen($newDescription);
-                $numStr = substr($newDescription,0,$strLen-2);
-                $finDescription = (floatval($numStr)*304.80)."mm";
+        #    echo "\$newStr = $newStr <br>";
+            if (substr($newStr,-2) == "ft") { //--> convert to mm if the text is written as ft
+                $strLen = strlen($newStr);
+                $numStr = substr($newStr,0,$strLen-2);
+                $newDescription = (floatval($numStr)*304.80)."mm";
+                #echo "\$strLen = ".$finDescription."<br>";
             }else{
-                $finDescription = $newDescription;
+                $newDescription = $newStr;
             }
+        #    echo "\$newDescription = $newDescription<br>";
 
-            $finDescription = floatval(str_replace("mm", "", $finDescription));
-            #echo $finDescription."<br>";
+            //deletes DIA and MM
+            $replace_array = array("dia,","dia;","dia:","dia.","dia","mm");
+
+            $finDescription = floatval(str_replace($replace_array,"", $newDescription)); //--> removes "mm" and convert the number into float
+        #    echo $finDescription."<br>";
             array_push($dimension, $finDescription);
 
-
-                #echo $newDescription."<br>";
-                #echo $lowerStr." Has been separated into : (".$splitDescription['0'].") (".$splitDescription['1'].") (".$splitDescription['2'].")<br>";
+            #echo $newDescription."<br>";
+            
         }   
+        #echo $lowerStr." Has been separated into : (".$dimension['0'].") (".$dimension['1'].") (".$dimension['2'].")<br>";
         return $dimension;
     }
 }

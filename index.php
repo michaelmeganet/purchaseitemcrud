@@ -22,8 +22,9 @@ if ($matType == "Plate") {
 	$btnPlate = 'Sorted by Plate';
 	$btnShaft = '<a href="index.php?type=Dia" class="btn btn-info">Sort by Shaft</a>';
 }*/
-$purchases_list = $purchases->purchases_list_type2($matType);
-$purchases_numrows = $purchases->purchases_list_numrows_type2($matType);
+include_once "calPurchase.php"; //--> check and input all type into database
+$purchases_list = $purchases->calpurchase_list_type2($matType);
+$purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
 echo $purchases_numrows."<br>";
 ?>
 <div class="container">
@@ -40,35 +41,31 @@ echo $purchases_numrows."<br>";
 				<th>Company Name</th>
 				<th>Item Code</th>
 				<th>Description</th>
-				<th>Size1</th>
-				<th>Size2</th>
-				<th>Size3</th>
+				<th>Thickness</th>
+				<th>Width</th>
+				<th>Length</th>
 				<th>Action</th>
 			</thead>
 			<tbody>
 				<?php
 				if ($purchases_numrows>0) {
 					$rows = $purchases_list;
-					$rowDimension = new Dimensions();
 					foreach ($rows as $row) {
 						#line below is still in progress#
-						$dimensions = $rowDimension->split_dimension_to_array($row);
-								
+						#print_r($rows);		
 						echo "<tr>
 								  <td style='width: 8%'>{$row['Doc_No']}</td>
 								  <td style='width: 37%'>{$row['Company_Name']}</td>
 								  <td style='width: 12%'>{$row['Item_Code']}</td>
 								  <td>{$row['Description_2']}</td>
-								  <td>{$dimensions['0']}</td>
-								  <td>{$dimensions['1']}</td>
-								  <td>{$dimensions['2']}</td>
+								  <td>{$row['thickness']}</td>
+								  <td>{$row['width']}</td>
+								  <td>{$row['length']}</td>
 								  <td><a href='delete-purchases.php?id={$row['id']}' class='btn btn-danger'>Delete</a></td> 
 								  <td><a href='update-purchases.php?id={$row['id']}' class='btn btn-info'>Edit</a></td>
 								  <td><a href='details-purchases.php?id={$row['id']}' class='btn btn-primary'>Details</a></td> 
 								  </tr>
-
 								";
-					
 					}
 				}
 				?>
