@@ -25,7 +25,7 @@ if ($matType == "Plate") {
 include_once "calPurchase.php"; //--> check and input all type into database
 $purchases_list = $purchases->calpurchase_list_type2($matType);
 $purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
-echo $purchases_numrows."<br>";
+#echo $purchases_numrows."<br>";
 ?>
 <div class="container">
 	<div class="row content">

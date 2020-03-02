@@ -24,6 +24,7 @@ Class Purchases{
 		Company_Name
 		Item_Code
 		Description_2
+		Qty
 		thickness -> from dimensions
 		width     -> from dimensions
 		length    -> from dimensions
@@ -60,6 +61,7 @@ Class Purchases{
 			   Company_Name = '{$Company_Name}',
 			   Item_Code = '{$Item_Code}',
 			   Description_2 = '{$Description_2}',
+			   Qty = '{Qty}',
 			   thickness = '{$thickness}',
 			   width = '{$width}',
 			   length = '{$length}',
@@ -74,9 +76,9 @@ Class Purchases{
 		$objSQL = new SQL($qr);
 		$result = $objSQL->InsertData();
 		if ($result == 'insert ok!') {
-			echo "Insert Successful<br>";
+			return true;
 		}else{
-			echo "Insert Failed.<br>";
+			return false;
 		}
 
 	}
