@@ -9,10 +9,12 @@ $matType = (isset($_GET['type'])) ? $_GET['type'] : "Plate";
 if ($matType == "Plate") {
 	$btnPlate = 'Sorted by Plate';
 	$btnShaft = '<a href="index.php?type=Shaft" class="btn btn-info">Sort by Shaft</a>';
+
 }else{
 	$btnPlate = '<a href="index.php?type=Plate" class="btn btn-info">Sort by Plate</a>';
 	$btnShaft = 'Sorted by Shaft';
 }
+$url = "index.php?type={$matType}"; //--> get url
 /*if (isset($_GET['type'])) {
 	$type = $_GET['type'];
 	$btnPlate = '<a href="index.php" class="btn btn-info">Sort by Plate</a>';
@@ -22,9 +24,18 @@ if ($matType == "Plate") {
 	$btnPlate = 'Sorted by Plate';
 	$btnShaft = '<a href="index.php?type=Dia" class="btn btn-info">Sort by Shaft</a>';
 }*/
+?>
+<div></div>
+<?php
 include_once "calPurchase.php"; //--> check and input all type into database
-$purchases_list = $purchases->calpurchase_list_type2($matType);
+//# insert pagination code here #//
+include_once "pagination.php";
+#$purchases_list = $purchases->calpurchase_list_type2($matType);
+#$purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
+$purchases_list = $purchases->calpurchase_list_limit_type2($matType,$startLimit,$rowPage);
 $purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
+
+
 #echo $purchases_numrows."<br>";
 ?>
 <div class="container">
@@ -35,6 +46,9 @@ $purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
 			echo $btnPlate."    ".$btnShaft;
 			  
 			?></div>
+			<div>
+				<?php echo $textPagination; ?>
+			</div><br>
 		<table class="table">
 			<thead>
 				<th>Doc. No</th>
@@ -44,6 +58,8 @@ $purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
 				<th>Thickness</th>
 				<th>Width</th>
 				<th>Length</th>
+				<th>Volume</th>
+				<th>Weight</th>
 				<th>Action</th>
 			</thead>
 			<tbody>
@@ -61,6 +77,8 @@ $purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
 								  <td>{$row['thickness']}</td>
 								  <td>{$row['width']}</td>
 								  <td>{$row['length']}</td>
+								  <td>{$row['volume']}</td>
+								  <td>{$row['weight']}</td>
 								  <td><a href='delete-purchases.php?id={$row['id']}' class='btn btn-danger'>Delete</a></td> 
 								  <td><a href='update-purchases.php?id={$row['id']}' class='btn btn-info'>Edit</a></td>
 								  <td><a href='details-purchases.php?id={$row['id']}' class='btn btn-primary'>Details</a></td> 

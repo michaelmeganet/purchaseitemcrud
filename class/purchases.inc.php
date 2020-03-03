@@ -61,7 +61,7 @@ Class Purchases{
 			   Company_Name = '{$Company_Name}',
 			   Item_Code = '{$Item_Code}',
 			   Description_2 = '{$Description_2}',
-			   Qty = '{Qty}',
+			   Qty = '{$Qty}',
 			   thickness = '{$thickness}',
 			   width = '{$width}',
 			   length = '{$length}',
@@ -122,9 +122,38 @@ Class Purchases{
 		$result = $objSQL->getResultRowArray();
 		return $result;
 	}
+	function calpurchase_list_limit_type2($type,$offset,$limit){
+		if ($type == "Plate") {
+			$qrWhere = " AND calpurchase.Description_2 NOT LIKE '%Dia%' AND calpurchase.Description_2 NOT LIKE '%od%'"; 
+		}elseif ($type == "Shaft") {
+			$qrWhere = " AND calpurchase.Description_2 LIKE '%Dia%'";
+		}
+
+		$qrType = '"%'.$type.'%"';
+		$qr = "SELECT * FROM calpurchase 
+			   LEFT JOIN material
+			   ON calpurchase.Item_Code = material.material
+			   WHERE calpurchase.Item_Code LIKE {$qrType}".$qrWhere." LIMIT $offset,$limit";
+
+		#echo $qr."<br>";
+
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getResultRowArray();
+		return $result;
+	}
+
 	function calpurchase_list_numrows_type2($type){
 		$qrType = '"%'.$type.'%"';
 		$qr = "SELECT COUNT(*) FROM calpurchase WHERE Item_Code LIKE {$qrType} ORDER BY id";
+		#echo $qr."<br>";
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getRowCount();
+		return $result;
+	}
+
+	function calpurchase_list_numrows_limit_type2($type,$offset,$limit){
+		$qrType = '"%'.$type.'%"';
+		$qr = "SELECT COUNT(*) FROM calpurchase WHERE Item_Code LIKE {$qrType} ORDER BY id LIMIT $offset,$limit";
 		#echo $qr."<br>";
 		$objSQL = new SQL($qr);
 		$result = $objSQL->getRowCount();
@@ -190,7 +219,7 @@ Class Purchases{
 	function purchases_list_numrows_type2($type){
 		$qrType = '"%'.$type.'%"';
 		$qr = "SELECT COUNT(*) FROM purchase WHERE Item_Code LIKE {$qrType} ORDER BY id";
-		echo $qr."<br>";
+		#echo $qr."<br>";
 		$objSQL = new SQL($qr);
 		$result = $objSQL->getRowCount();
 		return $result;

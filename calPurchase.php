@@ -30,10 +30,12 @@ if ($PurchaseRows>0){
 		 $dimensions[] = the dimensions of the current purchase row
 		**********************************************/
 		#echo "<pre>".print_r($calPurchaseArray)."</pre>";
-		$calPurchaseRows = $calPurchase->calpurchase_list_one_row($row['id']);
+		
+		$calPurchaseRows = $calPurchase->calpurchase_list_one_row($row['id']); //crosschecks current data with calpurchase
 		#echo $calPurchaseRows;
 
-		if ($calPurchaseRows==0) {
+		if ($calPurchaseRows==0) { //checks if there's data that has not been inserted into calpurchase
+
 			#foreach ($calPurchaseArray as $calRow) { //--> loop this every row in calpurchase table
 			#	echo "\$row['id'] = {$row['id']} && \$calRow['pid'] = {$calRow['pid']}";
 			#	if ($row['id'] != $calRow['pid']) {  //--> check if the current selected row already exists in table
@@ -45,7 +47,10 @@ if ($PurchaseRows>0){
 		
 
 	}
-	echo "Found and inserted $count new data into calPurchase table";
+	if ($count<>0) { //==> if there's new data inserted
+		echo "Found and inserted $count new data into calPurchase table";
+	}
+	
 
 }
 
