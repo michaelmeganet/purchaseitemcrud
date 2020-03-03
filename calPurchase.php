@@ -1,4 +1,5 @@
 <?php
+include_once "class/variables.inc.php";
 /**************************************
 This file must be called from index.php
 
@@ -30,7 +31,7 @@ if ($PurchaseRows>0){
 		 $dimensions[] = the dimensions of the current purchase row
 		**********************************************/
 		#echo "<pre>".print_r($calPurchaseArray)."</pre>";
-		
+
 		$calPurchaseRows = $calPurchase->calpurchase_list_one_row($row['id']); //crosschecks current data with calpurchase
 		#echo $calPurchaseRows;
 

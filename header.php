@@ -7,6 +7,20 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="./assets/style.css">
         <script>
+            function cloneValidate(url,index){
+                if(window.confirm("Are you sure you want to clone?\nThis will create a duplicate in your table.")){
+                    window.location.href = url;
+                }else{
+                    window.location.href = index;
+                }
+            }
+            function delValidate(url,index){
+                if(window.confirm("Caution! Data will be deleted!\nThis cannot be undone!")){
+                    window.location.href = url;
+                }else{
+                    window.location.href = index;
+                }
+            }
             function updateValidate(){
                 if(window.confirm("Are you sure you want to submit?")){
                     return true;
@@ -15,8 +29,8 @@
                 }
             }
 
-            function redirectToIndex(){
-                window.alert("Update Successful.\nReturning to Customer List.");
+            function redirectToIndex(text){
+                window.alert(text);
                 window.location.href = './index.php';
             }
             /*var $my_form = $("#updateForm");

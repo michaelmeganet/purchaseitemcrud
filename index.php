@@ -1,7 +1,6 @@
 <?php
 include "header.php";
 include_once "class/purchases.inc.php";
-include_once "class/variables.inc.php";
 
 #create new object
 $purchases = new Purchases();
@@ -9,10 +8,13 @@ $matType = (isset($_GET['type'])) ? $_GET['type'] : "Plate";
 if ($matType == "Plate") {
 	$btnPlate = 'Sorted by Plate';
 	$btnShaft = '<a href="index.php?type=Shaft" class="btn btn-info">Sort by Shaft</a>';
-
-}else{
+	include_once "calPurchase.php"; //--> check and input all type into database
+}elseif ($matType =="Shaft") {
 	$btnPlate = '<a href="index.php?type=Plate" class="btn btn-info">Sort by Plate</a>';
 	$btnShaft = 'Sorted by Shaft';
+	include_once "calPurchase.php"; //--> check and input all type into database
+}else{
+	
 }
 $url = "index.php?type={$matType}"; //--> get url
 /*if (isset($_GET['type'])) {
@@ -24,10 +26,8 @@ $url = "index.php?type={$matType}"; //--> get url
 	$btnPlate = 'Sorted by Plate';
 	$btnShaft = '<a href="index.php?type=Dia" class="btn btn-info">Sort by Shaft</a>';
 }*/
-?>
-<div></div>
-<?php
-include_once "calPurchase.php"; //--> check and input all type into database
+
+
 //# insert pagination code here #//
 include_once "pagination.php";
 #$purchases_list = $purchases->calpurchase_list_type2($matType);
@@ -60,7 +60,7 @@ $purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
 				<th>Length</th>
 				<th>Volume</th>
 				<th>Weight</th>
-				<th>Action</th>
+				<th style="text-align: center">Action</th>
 			</thead>
 			<tbody>
 				<?php
@@ -79,9 +79,11 @@ $purchases_numrows = $purchases->calpurchase_list_numrows_type2($matType);
 								  <td>{$row['length']}</td>
 								  <td>{$row['volume']}</td>
 								  <td>{$row['weight']}</td>
-								  <td><a href='delete-purchases.php?id={$row['id']}' class='btn btn-danger'>Delete</a></td> 
-								  <td><a href='update-purchases.php?id={$row['id']}' class='btn btn-info'>Edit</a></td>
-								  <td><a href='details-purchases.php?id={$row['id']}' class='btn btn-primary'>Details</a></td> 
+								  <td style='width: 25%; text-align:center'>
+								  <a href=\"javascript:delValidate('delete-purchases.php?id={$row['id']}','#')\" class='btn btn-danger' id='delPurchase'>Delete</a>
+								  <a href='update-purchases.php?id={$row['id']}' class='btn btn-info'>Edit</a>
+								  <a href='details-purchases.php?id={$row['id']}' class='btn btn-primary'>Details</a>
+								  <a href=\"javascript:cloneValidate('clone-purchases.php?id={$row['id']}','#')\" class='btn btn-success'>Clone Record</a></td> 
 								  </tr>
 								";
 					}

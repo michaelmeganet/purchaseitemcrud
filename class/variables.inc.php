@@ -84,6 +84,7 @@ Class SQL extends Dbh {
     public function getResultOneRowArray() {
         $row = array();
         $sql = $this->sql;
+
 //        echo "\$sql = $sql <br>";
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute();
@@ -140,7 +141,7 @@ Class SQL extends Dbh {
         $stmt = $this->connect()->prepare($sql);
 
         if ($stmt->execute()) {
-            $result = 'deleted';
+            $result = 'delete ok';
         } else {
             $result = 'delete failed';
         }

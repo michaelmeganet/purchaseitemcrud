@@ -8,7 +8,36 @@ Class Purchases{
 	function __construct(){
 		$this->postdata = [];
 	}
+	function calpurchase_clone($purchase_array=array()){
+		unset($purchase_array['id']);
 
+		$arrayKeys = array_keys($purchase_array);    //--> fetches the keys of array
+        $lastArrayKey = array_pop($arrayKeys); //--> fetches the last key of the compiled keys of arra
+		
+		$qr2 = "INSERT INTO calpurchase SET ";
+		foreach ($purchase_array as $key => $value) {
+            ${$key} = trim($value);
+            $columnHeader = $key; // creates new variable based on $key values
+            #echo $columnHeader." = ".$$columnHeader."<br>";
+            $qr2 .= $columnHeader."='{$$columnHeader}'";     //--> adds the key as parameter
+
+            if ($columnHeader != $lastArrayKey) { 
+                $qr2 .= ", ";      //--> if not final key, writes comma to separate between indexes
+            }else{
+                #do nothing         //--> if yes, do nothing
+            }
+        }
+        echo $qr2;
+        $objSQL = new SQL($qr2);
+        if ($objSQL->InsertData() == "insert ok!"){
+        	$result = TRUE;
+        }else{
+        	$result = FALSE;
+        }
+        return $result;
+
+
+	}
 	function calpurchase_create($matType,$purchase_array=array(),$dimension_array=array()){
 		$thickness = $dimension_array['0'];
 		$length = $dimension_array['1'];
@@ -81,6 +110,82 @@ Class Purchases{
 			return false;
 		}
 
+	}
+
+	function calpurchase_update($post_data=array()){
+		$this->getPostData = $post_data;
+        /*$dbg = new DEBUG();     //--> creates object for debugging*/
+
+        //print_r($post_data);
+        #-----------------------------
+        # preparation to do looping
+        //fetch the id value and deletes it from array
+        /**/   $id = $post_data['id'];
+        /**/   unset($post_data['id']);
+
+        $arrayKeys = array_keys($post_data);    //--> fetches the keys of array
+        $lastArrayKey = array_pop($arrayKeys); //--> fetches the last key of the compiled keys of array
+        # end preparation
+        #-----------------------------
+        #------------------------------------------------------
+        # Begin loop process
+        $qr2 = "UPDATE calpurchase SET "; //--> creates main body for query
+        foreach ($post_data as $key => $value) {
+
+            ${$key} = trim($value);
+            $columnHeader = $key; // creates new variable based on $key values
+            #echo $columnHeader." = ".$$columnHeader."<br>";
+
+        /*$dbg->review($columnHeader." = ".$$columnHeader."<br>");*/ //this is for debugging, not yet implemented
+
+            $qr2 .= $columnHeader."=:{$columnHeader}";     //--> adds the key as parameter
+            if ($columnHeader != $lastArrayKey) { 
+                $qr2 .= ", ";      //--> if not final key, writes comma to separate between indexes
+            }else{
+                #do nothing         //--> if yes, do nothing
+            }
+        }
+        # end loop
+        #------------------------------------------------------
+        $qr2 .= " WHERE id = $id";
+        #echo "<br><br><br>" . $qr2 . "<br>";
+        /*$dbg->review($qr2);*/
+        $objSQL = new SQLBINDPARAM($qr2,$post_data);
+        $result = $objSQL->UpdateData2();
+
+        if ($result == 'Update ok!') {
+
+            $_SESSION['message'] = "Successfully Created Student Info";
+            $_SESSION['success'] = true;
+            #echo "Successfully Created Customer Info<br>";
+
+            //header('URL=./index.php');          //redirects
+            /*echo "<pre>"; print_r($dbg->showToConsole()); echo"</pre>";*/
+        } else {
+            $error = "Fail to Created Customer Info <br>";
+            $_SESSION['message'] = "Please check this \$sql -> $qr2";
+            $_SESSION['success'] = false;
+            $url = "customercreatefail.php?err=$error";
+            //    redirect($url);
+            //header('Location: customercreatefail.php?err=$error');
+        }
+    }
+    function calpurchase_delete($id){
+    	$qr = "DELETE FROM calpurchase WHERE id = {$id}";
+
+    	$objSQL = new SQL($qr);
+    	if ($objSQL->getDelete()=="delete ok") {
+    		$result = true;
+    	}else{
+    		$result = false;
+    	}
+    	return $result;
+    }
+	function calpurchase_list_byid($id){
+		$qr = "SELECT * FROM calpurchase WHERE id = {$id}";
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getResultOneRowArray();
+		return $result;
 	}
 	function calpurchase_list(){
 		$qr = "SELECT * FROM calpurchase"; 
