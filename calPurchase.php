@@ -6,15 +6,16 @@ This file must be called from index.php
 Variables that carried over from
 index.php
 ----------------------------
-$matType = fetches the material Type
+$matCategory = fetches Category of Material
+$matShapeCode = fetches Shape Code of Material
 
 **************************************/
-
+#echo $matCategory."  ".$matShapeCode;
 //create purchase object
 $calPurchase = new Purchases();
 //call main variables
-$PurchaseArray = $calPurchase->purchases_list_type2($matType);
-$PurchaseRows = $calPurchase->purchases_list_numrows_type2($matType);
+$PurchaseArray = $calPurchase->purchases_list_type3($matCategory,$matShapeCode);     
+$PurchaseRows = $calPurchase->purchases_list_numrows_type3($matCategory,$matShapeCode);
 
 
 if ($PurchaseRows>0){
@@ -24,6 +25,8 @@ if ($PurchaseRows>0){
 	foreach ($rows as $row) {
 		#line below is still in progress#
 		$dimensions = $rowDimension->split_dimension_to_array($row); //--> split description_2 into each array
+		#print_r($row);
+		#print_r($dimensions);
 
 		//try inserting current row into calpurchase table
 		/**********************************************
@@ -40,7 +43,7 @@ if ($PurchaseRows>0){
 			#foreach ($calPurchaseArray as $calRow) { //--> loop this every row in calpurchase table
 			#	echo "\$row['id'] = {$row['id']} && \$calRow['pid'] = {$calRow['pid']}";
 			#	if ($row['id'] != $calRow['pid']) {  //--> check if the current selected row already exists in table
-					$calPurchaseInsert = $calPurchase->calpurchase_create($matType,$row,$dimensions);
+					$calPurchaseInsert = $calPurchase->calpurchase_create($matCategory,$matShapeCode,$row,$dimensions);
 					$count++;
 			#	}
 			#}

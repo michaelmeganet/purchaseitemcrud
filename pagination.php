@@ -24,7 +24,7 @@
 $pageurl = $url;
 
 //get number of records in the table
-$rowCounter = $purchases->calpurchase_list_numrows_type2($matType);
+$rowCounter = $purchases->calpurchase_list_numrows_type3($matCategory,$matShapeCode);
 #echo $rowCounter."<br>";
 
 //get number of pages based on number of rows per page

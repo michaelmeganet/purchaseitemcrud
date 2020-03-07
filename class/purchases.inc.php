@@ -38,76 +38,173 @@ Class Purchases{
 
 
 	}
-	function calpurchase_create($matType,$purchase_array=array(),$dimension_array=array()){
-		$thickness = $dimension_array['0'];
-		$length = $dimension_array['1'];
-		//begin attaching each array to coresponding variables
-		foreach ($purchase_array as $key => $value) {
-			${$key} = $value;
-		}
-		/*
-		Data needed :
-		pid
-		Date
-		Doc_No
-		Company_Name
-		Item_Code
-		Description_2
-		Qty
-		thickness -> from dimensions
-		width     -> from dimensions
-		length    -> from dimensions
-		density   -> Plate = 0.00000785000 | Shaft = 0.00000625000
-		volume	  -> thick * width * length
-		weight    -> volume * density
-		UOM
-		Unit_Price
-		DISC
-		SubTotal
-		*/
-		//get the correct density and sizes
-		if ($matType == "Plate") {
-			$width = $dimension_array['2'];
-			$density = number_format(0.00000785,8,'.','');
-			#volume
-			$volume = number_format($thickness * $width * $length,2,'.','');
-		}elseif ($matType == "Shaft") {
-
-			$width = "";
-			$density = number_format(0.00000625,8,'.','');
-			#volume
-			$volume = number_format($thickness * $length * $length,2,'.','');
-		}
-
-		#weight
-		$weight = number_format($volume * $density,2,'.','');
-
-		$qr = "INSERT INTO calpurchase
-			   SET
-			   pid = {$id},
-			   Date = '{$Date}',
-			   Doc_No = '{$Doc_No}',
-			   Company_Name = '{$Company_Name}',
-			   Item_Code = '{$Item_Code}',
-			   Description_2 = '{$Description_2}',
-			   Qty = '{$Qty}',
-			   thickness = '{$thickness}',
-			   width = '{$width}',
-			   length = '{$length}',
-			   density = '{$density}',
-			   volume = '{$volume}',
-			   weight = '{$weight}',
-			   UOM = '{$UOM}',
-			   Unit_Price = '{$Unit_Price}',
-			   DISC = '{$DISC}',
-			   SubTotal = '{$SubTotal}'";
-		#echo $qr."<br>";
-		$objSQL = new SQL($qr);
-		$result = $objSQL->InsertData();
-		if ($result == 'insert ok!') {
-			return true;
+	function calpurchase_create($category,$shapecode,$purchase_array=array(),$dimension_array=array()){
+		//checks if the array contains "dia"
+		if (preg_grep('/(dia)/',$dimension_array)) {
+			$diaKey = key(preg_grep('/(dia)/',$dimension_array)); //find out what's the index of 'dia'
+			$diaText = $dimension_array[$diaKey];				 //take the value of the index
+			//shifts the diameter that's found into the first index
+			unset($dimension_array[$diaKey]);
+			array_unshift($dimension_array, $diaText);
+			$diaCheck = TRUE;
+		}elseif ($category == 'Rod') {
+			$diaCheck = TRUE;
 		}else{
-			return false;
+			$diaCheck = FALSE;
+		}
+		//check if the array contains "hex"
+		if (preg_grep('/(hex)/', $dimension_array)) {
+			$hexKey = key(preg_grep('/(hex)/', $dimension_array));
+			unset($dimension_array[$hexKey]);
+			$dimension_array = array_values($dimension_array);
+			$hexCheck = TRUE;
+		}else{
+			$hexCheck = FALSE;
+		}
+		//check if the array contains
+	#	echo "purchase array = ";
+	#	print_r($purchase_array);
+	#	echo "<br>";
+	#	echo "dimension array = ";
+	#	print_r($dimension_array);
+	#	echo "<br>";
+		//delete all texts from dimension array, and return numbers only
+		$replace_array = array("hex","dia,","dia;","dia:","dia.","dia","mm"); //--> to lists what need to be replaced.
+		$newDimensionArray = str_replace($replace_array,"",$dimension_array); //--> replaces the text
+	#	print_r($newDimensionArray);
+	#	echo "<br>";
+		if ($diaCheck){
+			$thickness = floatval($newDimensionArray['0']); //diameter
+			$length = floatval($newDimensionArray['1']); //length
+			$qrext = "";
+		}else{
+			$thickness = floatval($newDimensionArray['0']); //thickness
+			$width = floatval($newDimensionArray['1']); //width
+			$length = floatval($newDimensionArray['2']); //length
+			$qrext = ", width = {$width}";
+		}
+
+		//begin attaching each array to coresponding variables
+		foreach ($purchase_array as $Pkey => $Pvalue) {
+			$var = "var_".$Pkey;
+			${$var} = $Pvalue;
+		}
+
+			//getDensity
+		if ($var_is_shaft=='no') {
+			$density = floatval($var_plate);
+		}else{
+			$density = floatval($var_shaft);
+		}
+		
+
+		switch ($category) {
+			case 'Plate':
+				switch ($shapecode) {
+					case 'PLATE':
+						if ($diaCheck) {
+							$radius = $thickness/2;
+							$area = pi()*($radius^2);
+							$volume = $area*$length;
+							echo "length = $length, thick/dia = $thickness, denisty = $density <br>";
+						}else{
+							$area = $width*$length;
+							$volume = $area * $thickness;
+							echo "width = $width, length = $length, thick/dia = $thickness, denisty = $density <br>";
+						}	
+						
+						break;
+					
+					case 'PLATEC':
+						//not yet implemented
+						$errormsg = "not yet implemented";
+						break;
+				}
+				break;
+			
+			case 'Rod':
+				switch ($shapecode) {
+					case 'O':
+						if($diaCheck){
+							if ($hexCheck) {
+								//not yet implemented
+								$errormsg = "not yet implemented";
+							}else{
+							$radius = $thickness/2;
+							$area = pi()*($radius^2);
+							$volume = $area*$length;
+							}
+						echo "length = $length, thick/dia = $thickness, denisty = $density <br>";
+						}else{
+
+						}
+						break;					
+				}
+				break;
+			
+			case 'Irregular':
+				switch ($shapecode) {
+					case 'L':
+						//not yet implemented
+						$errormsg = "not yet implemented";
+						break;
+					case 'HEX':
+						//not yet implemented
+						$errormsg = "not yet implemented";
+						break;
+					case 'HS':
+						//not yet implemented
+						$errormsg = "not yet implemented";
+						break;
+					case 'SS':
+						//not yet implemented
+						$errormsg = "not yet implemented";
+						break;
+					case 'HP':
+						//not yet implemented
+						$errormsg = "not yet implemented";
+						break;
+					case 'PLATE':
+						//not yet implemented
+						$errormsg = "not yet implemented";
+						break;
+				}
+				break;
+			
+		}
+
+		$weight = $volume * $density;
+
+		if (isset($errormsg)) { //==> this is for debugging, since this is not yet completed
+			echo $errormsg."<br>";
+		}else{
+			$qr = "INSERT INTO calpurchase
+				   SET
+				   pid = {$var_id},
+				   Date = '{$var_Date}',
+				   Doc_No = '{$var_Doc_No}',
+				   Company_Name = '{$var_Company_Name}',
+				   Item_Code = '{$var_Item_Code}',
+				   Description_2 = '{$var_Description_2}',
+				   Qty = '{$var_Qty}',
+				   thickness = '{$thickness}',
+				   length = '{$length}',
+				   volume = '{$volume}',
+				   weight = '{$weight}',
+				   UOM = '{$var_UOM}',
+				   Unit_Price = '{$var_Unit_Price}',
+				   DISC = '{$var_DISC}',
+				   SubTotal = '{$var_SubTotal}',
+				   category = '{$var_category}',
+				   Shape_Code = '{$var_Shape_Code}'".$qrext;
+			#echo $qr."<br>";
+			$objSQL = new SQL($qr);
+			$result = $objSQL->InsertData();
+			if ($result == 'insert ok!') {
+				return true;
+			}else{
+				return false;
+			}
 		}
 
 	}
@@ -133,7 +230,7 @@ Class Purchases{
         foreach ($post_data as $key => $value) {
 
             ${$key} = trim($value);
-            $columnHeader = $key; // creates new variable based on $key values
+            $columnHeader = $key; // creates new variable based on $ key values
             #echo $columnHeader." = ".$$columnHeader."<br>";
 
         /*$dbg->review($columnHeader." = ".$$columnHeader."<br>");*/ //this is for debugging, not yet implemented
@@ -227,6 +324,73 @@ Class Purchases{
 		$result = $objSQL->getResultRowArray();
 		return $result;
 	}
+	function calpurchase_list_type3($category,$shapecode){
+		$qrType = '"%'.$type.'%"';
+		$qr = "SELECT * FROM calpurchase 
+			   WHERE category = {$category}
+			   AND Shape_Code = {$shapecode}";
+
+		#echo $qr."<br>";
+
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getResultRowArray();
+		return $result;
+	}
+	function calpurchase_list_limit_type3($category,$shapecode,$offset,$limit){
+		$qr = "SELECT * FROM calpurchase
+				WHERE category = '{$category}'
+				AND Shape_Code = '{$shapecode}' LIMIT $offset,$limit";	   
+
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getResultRowArray();
+		return $result;
+	}
+	
+	function calpurchase_list_numrows_type3($category,$shapecode){
+		$qr = "SELECT COUNT(*) FROM calpurchase 
+				WHERE category = '{$category}' 
+				AND Shape_Code = '{$shapecode}'";
+		#echo $qr."<br>";
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getRowCount();
+		return $result;
+	}
+	function calpurchase_list_numrows_limit_type3($category,$shapecode,$offset,$limit){
+		$qr = "SELECT COUNT(*) FROM calpurchase 
+			   WHERE category = '{$category}' 
+			   AND Shape_Code = '{$shapecode}' 
+			   ORDER BY id LIMIT $offset,$limit";
+		#echo $qr."<br>";
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getRowCount();
+		return $result;
+	}
+
+
+	function purchases_list_type3($category, $shape_code){
+		$qr = "SELECT purchase.*, material.shaft AS is_shaft, material_density.plate , material_density.shaft FROM purchase
+		LEFT JOIN material
+		ON purchase.Item_Code = material.material_acc
+		LEFT JOIN material_density
+		on material.materialtype = material_density.materialtype 
+		WHERE category = '{$category}' 
+		AND Shape_Code = '{$shape_code}'";
+		#echo $qr."<br>";
+
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getResultRowArray();
+		return $result;
+	}
+	function purchases_list_numrows_type3($category, $shape_code){
+		$qr = "SELECT COUNT(*) FROM purchase 
+				WHERE category = '{$category}' 
+				AND Shape_Code = '{$shape_code}'";
+		#echo $qr."<br>";
+		$objSQL = new SQL($qr);
+		$result = $objSQL->getRowCount();
+		return $result;
+	}
+
 	function calpurchase_list_limit_type2($type,$offset,$limit){
 		if ($type == "Plate") {
 			$qrWhere = " AND calpurchase.Description_2 NOT LIKE '%Dia%' AND calpurchase.Description_2 NOT LIKE '%od%'"; 
@@ -246,7 +410,6 @@ Class Purchases{
 		$result = $objSQL->getResultRowArray();
 		return $result;
 	}
-
 	function calpurchase_list_numrows_type2($type){
 		$qrType = '"%'.$type.'%"';
 		$qr = "SELECT COUNT(*) FROM calpurchase WHERE Item_Code LIKE {$qrType} ORDER BY id";
@@ -264,9 +427,6 @@ Class Purchases{
 		$result = $objSQL->getRowCount();
 		return $result;
 	}
-
-
-
 	function purchases_list(){
 		$qr = "SELECT * FROM purchase ORDER BY id ASC";
 		$objSQL = new SQL($qr);
@@ -274,18 +434,18 @@ Class Purchases{
 		return $result;
 	}
 
+	
 	function purchases_list_type2($type){
 		if ($type == "Plate") {
-			$qrWhere = " AND purchase.Description_2 NOT LIKE '%Dia%' AND purchase.Description_2 NOT LIKE '%od%'"; 
+			#SELECT * FROM purchase LEFT JOIN material ON purchase.Item_Code = material.material
+			#WHERE purchase.Item_Code LIKE 
+			$qrWhere = " WHERE category"; 
 		}elseif ($type == "Shaft") {
 			$qrWhere = " AND purchase.Description_2 LIKE '%Dia%'";
 		}
 
 		$qrType = '"%'.$type.'%"';
-		$qr = "SELECT * FROM purchase 
-			   LEFT JOIN material
-			   ON purchase.Item_Code = material.material
-			   WHERE purchase.Item_Code LIKE {$qrType}".$qrWhere;
+		$qr = "SELECT * FROM purchase".$qrWhere;
 
 		#echo $qr."<br>";
 
@@ -329,6 +489,7 @@ Class Purchases{
 		$result = $objSQL->getRowCount();
 		return $result;
 	}
+
 	function purchases_list_numrows_type($type){
 		if (is_null($type)) {
 			$qrType = "IS NULL";

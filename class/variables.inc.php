@@ -5,10 +5,9 @@ Class Dimensions{
     function __construct(){
 
     }
-
+    
     function split_dimension_to_array($dimensionArray = array()){
-        $this->dimensionArray = $dimensionArray;
-        $row = $this->dimensionArray;
+        $row = $dimensionArray;
         $trimStr = preg_replace("/( )/", "",$row['Description_2']); //removes all space
         #echo $trimStr."<br>";
         $lowerStr = strtolower($trimStr);
@@ -17,6 +16,10 @@ Class Dimensions{
         #print_r($splitDescription);
         $dimension = [];
         foreach ($splitDescription as $value) { 
+
+            if ($value == 'he'){
+                $value = 'hex';
+            }
 
             if (($pos = strpos($value, ':')) !== false) { //--> check if there's any other character besides dimensions
                 $newStr = substr($value, $pos+1) ;
@@ -30,24 +33,40 @@ Class Dimensions{
                 $numStr = substr($newStr,0,$strLen-2);
                 $newDescription = (floatval($numStr)*304.80)."mm";
                 #echo "\$strLen = ".$finDescription."<br>";
+            }elseif (substr($newStr,-1) == "m" AND substr($newStr, -2)!=="mm") {
+                $strLen = strlen($newStr);
+                $numStr = substr($newStr,0,$strLen-1);
+                $newDescription = (floatval($numStr)*1000)."mm";
+                #echo "\$strLen = ".$finDescription."<br>";.
             }else{
                 $newDescription = $newStr;
             }
         #    echo "\$newDescription = $newDescription<br>";
 
-            //deletes DIA and MM
+/*            //deletes DIA and MM
             $replace_array = array("dia,","dia;","dia:","dia.","dia","mm");
 
             $finDescription = floatval(str_replace($replace_array,"", $newDescription)); //--> removes "mm" and convert the number into float
-        #    echo $finDescription."<br>";
-            array_push($dimension, $finDescription);
-
+ */       #    echo $finDescription."<br>";
+            array_push($dimension, $newDescription);
+#           array_push($dimension, $finDescription);
             #echo $newDescription."<br>";
             
         }   
         #echo $lowerStr." Has been separated into : (".$dimension['0'].") (".$dimension['1'].") (".$dimension['2'].")<br>";
         return $dimension;
     }
+}
+
+Class Calculate{
+    //not finished
+    public function __construct(){
+
+    }
+    public function calculatePlatePLATE(){
+
+    }
+
 }
 
 Class SQL extends Dbh {

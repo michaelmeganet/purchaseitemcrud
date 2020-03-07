@@ -5,16 +5,18 @@ NOTE :
 
 Please import this the purchaseitemcrud.sql first
 
-this system will only add into the database if
-1. Shaft
- the description contains "DIA"
-and the Item_Code contains "Shaft"
-2. Plate
- the description does not contain "DIA" 
- and the Item_Code does not contains "Shaft"
 
- Workflow :
- 1. Data is inserted into Purchase table,
- 2. When data has been inserted into purchase table, the code
- will detect it when the page has been redirected to index.php
- 3. Data will be inputted into calPurchase table.
+List of Functions :
+Plate
+	- PLATE (Implemented, there's still some that has dia, must check)
+	- PLATEC (Not yet implemented)
+Rod
+	- O (Implemented, there's still some that contains HEX, must check)
+Irregular
+	- L  	(Not yet implemented)
+	- HEX	(Not yet implemented)
+	- HS 	(Not yet implemented)
+	- SS 	(Not yet implemented)
+	- HP 	(Not yet implemented)
+	- PLATE (Not yet implemented)
+	- null	(Not yet implemented)

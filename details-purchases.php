@@ -15,7 +15,7 @@ if (isset($_GET['id'])) {
 
         <a  href="index.php"  class="button button-purple mt-12 pull-right">View List Purchases</a>
 
-        <h3>View Customer Info</h3>
+        <h3>View Purchase Info</h3>
 
 
         <hr/>
