@@ -29,7 +29,7 @@ function circularArea($diameter) {
 
 function hexagonArea($h) {
 
-    $S = 2.0 * $h / sqrt(3.0); //edge to edge measurement $S
+    $S = (float) 2.0 * (float) $h / (float) sqrt(3.0); //edge to edge measurement $S
     // to the measurement of thickness of hexagon ($h)
     $Area = $S * $S(3.0 * sqrt(3.0)) / 2; //Area of Hexagon
 

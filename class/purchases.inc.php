@@ -131,6 +131,8 @@ Class Purchases {
                             if ($hexCheck) {
                                 //not yet implemented
                                 $errormsg = "not yet implemented";
+                                //implement by formular
+                                //$volume = Hexagon_Volume(hexagonArea($thickness), $length);
                             } else {
                                 $radius = $thickness / 2;
                                 $area = pi() * ($radius ^ 2);
