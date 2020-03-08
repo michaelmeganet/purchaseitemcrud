@@ -1,6 +1,6 @@
 <?php
 
-include_once "class/dbh.inc.php";
+include_once "dbh.inc.php";
 include_once "variables.inc.php";
 
 /**
@@ -28,16 +28,20 @@ function circularArea($diameter) {
 }
 
 function hexagonArea($h) {
-
-    $S = (float) 2.0 * (float) $h / (float) sqrt(3.0); //edge to edge measurement $S
+    $height = floatval($h);
+    $Area = 0.0;
+    $S = (float) 2.0 * (float) $height / (float) sqrt(3.0); //edge to edge measurement $S
     // to the measurement of thickness of hexagon ($h)
-    $Area = $S * $S(3.0 * sqrt(3.0)) / 2; //Area of Hexagon
 
+    $Area = pow($S, 2) * (3.0 * sqrt(3.0)) / 2; //Area of Hexagon
+    echo "\$Area = $Area <br>";
     return $Area;
 }
 
 function Hexagon_Volume($Area, $length) {
 
+    $volume = $Area * $length;
+    return $volume;
 }
 
 //$h= 6.0;

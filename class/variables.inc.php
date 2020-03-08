@@ -1,69 +1,75 @@
 <?php
-Class Dimensions{
+
+Class Dimensions {
 
     protected $dimensionArray;
-    function __construct(){
+
+    function __construct() {
 
     }
-    
-    function split_dimension_to_array($dimensionArray = array()){
+
+    function split_dimension_to_array($dimensionArray = array()) {
         $row = $dimensionArray;
-        $trimStr = preg_replace("/( )/", "",$row['Description_2']); //removes all space
+        $trimStr = preg_replace("/( )/", "", $row['Description_2']); //removes all space
         #echo $trimStr."<br>";
         $lowerStr = strtolower($trimStr);
         #$matches = preg_match("//", subject)
         $splitDescription = preg_split("/(x|X)/", $lowerStr); //makes the string lowercase, and separate each by 'X'
         #print_r($splitDescription);
         $dimension = [];
-        foreach ($splitDescription as $value) { 
+        foreach ($splitDescription as $value) {
 
-            if ($value == 'he'){
+            if ($value == 'he') {
                 $value = 'hex';
             }
 
             if (($pos = strpos($value, ':')) !== false) { //--> check if there's any other character besides dimensions
-                $newStr = substr($value, $pos+1) ;
-
-            }else{
+                $newStr = substr($value, $pos + 1);
+            } else {
                 $newStr = $value;
             }
-        #    echo "\$newStr = $newStr <br>";
-            if (substr($newStr,-2) == "ft") { //--> convert to mm if the text is written as ft
+            #    echo "\$newStr = $newStr <br>";
+            if (substr($newStr, -2) == "ft") { //--> convert to mm if the text is written as ft
                 $strLen = strlen($newStr);
-                $numStr = substr($newStr,0,$strLen-2);
-                $newDescription = (floatval($numStr)*304.80)."mm";
+                $numStr = substr($newStr, 0, $strLen - 2);
+                $newDescription = (floatval($numStr) * 304.80) . "mm";
                 #echo "\$strLen = ".$finDescription."<br>";
-            }elseif (substr($newStr,-1) == "m" AND substr($newStr, -2)!=="mm") {
+            } elseif (substr($newStr, -1) == "m" AND substr($newStr, -2) !== "mm") {
                 $strLen = strlen($newStr);
-                $numStr = substr($newStr,0,$strLen-1);
-                $newDescription = (floatval($numStr)*1000)."mm";
+                $numStr = substr($newStr, 0, $strLen - 1);
+                $newDescription = (floatval($numStr) * 1000) . "mm";
                 #echo "\$strLen = ".$finDescription."<br>";.
-            }else{
+            } else {
                 $newDescription = $newStr;
             }
-        #    echo "\$newDescription = $newDescription<br>";
+            #    echo "\$newDescription = $newDescription<br>";
 
-/*            //deletes DIA and MM
-            $replace_array = array("dia,","dia;","dia:","dia.","dia","mm");
+            /*            //deletes DIA and MM
+              $replace_array = array("dia,","dia;","dia:","dia.","dia","mm");
 
-            $finDescription = floatval(str_replace($replace_array,"", $newDescription)); //--> removes "mm" and convert the number into float
- */       #    echo $finDescription."<br>";
+              $finDescription = floatval(str_replace($replace_array,"", $newDescription)); //--> removes "mm" and convert the number into float
+             */       #    echo $finDescription."<br>";
             array_push($dimension, $newDescription);
 #           array_push($dimension, $finDescription);
             #echo $newDescription."<br>";
-            
-        }   
+        }
         #echo $lowerStr." Has been separated into : (".$dimension['0'].") (".$dimension['1'].") (".$dimension['2'].")<br>";
+//        echo"<br>####################################<br>";
+//        print_r($dimension);
+//        echo"<br>####################################<br>";
         return $dimension;
     }
+
 }
 
-Class Calculate{
+Class Calculate {
+
     //not finished
-    public function __construct(){
+    public function __construct() {
 
     }
-    public function calculatePlatePLATE(){
+
+    public function calculatePlatePLATE() {
 
     }
 
@@ -153,6 +159,7 @@ Class SQL extends Dbh {
         //echo "\$result = $result <br>";
         return $result;
     }
+
     public function getDelete() {
 
         $sql = $this->sql;
@@ -166,6 +173,7 @@ Class SQL extends Dbh {
         }
         return $result;
     }
+
 //    public function getPartialLimit(){
 //
 //        $sql = $this->sql;
@@ -208,7 +216,7 @@ Class SQLBINDPARAM extends SQL {
             # code...
             ${$key} = $value;
             $bindValue = $key;
-            $bindParamdata = "bindParam(:{$bindValue}, $$bindValue) == ".$$bindValue; //this is for debugging purposes
+            $bindParamdata = "bindParam(:{$bindValue}, $$bindValue) == " . $$bindValue; //this is for debugging purposes
             #echo "\$bindParamdata = $bindParamdata <br>";
             #########################################################
             # this line not successful, how to check in the future
@@ -219,7 +227,7 @@ Class SQLBINDPARAM extends SQL {
             # $$bindValue = calls the value contained by $key array  #
             ##########################################################
 
-            $stmt->bindParam(":{$bindValue}",$$bindValue);
+            $stmt->bindParam(":{$bindValue}", $$bindValue);
         }
 
 //        echo "=====var_dump \$stmt==================<br>";
@@ -232,6 +240,7 @@ Class SQLBINDPARAM extends SQL {
         }
         return $result;
     }
+
     public function UpdateData2() {
 
         $sql = $this->sql;
@@ -247,7 +256,7 @@ Class SQLBINDPARAM extends SQL {
             # code...
             ${$key} = $value;
             $bindValue = $key;
-            $bindParamdata = "bindParam(:{$bindValue}, $$bindValue) == ".$$bindValue; //this is for debugging purposes
+            $bindParamdata = "bindParam(:{$bindValue}, $$bindValue) == " . $$bindValue; //this is for debugging purposes
             #echo "\$bindParamdata = $bindParamdata <br>";
             #########################################################
             # this line not successful, how to check in the future
@@ -258,7 +267,7 @@ Class SQLBINDPARAM extends SQL {
             # $$bindValue = calls the value contained by $key array  #
             ##########################################################
 
-            $stmt->bindParam(":{$bindValue}",$$bindValue);
+            $stmt->bindParam(":{$bindValue}", $$bindValue);
         }
 
 //        echo "=====var_dump \$stmt==================<br>";
@@ -273,5 +282,7 @@ Class SQLBINDPARAM extends SQL {
         }
         return $result;
     }
+
 }
+
 ?>

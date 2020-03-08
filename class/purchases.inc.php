@@ -3,6 +3,17 @@
 include_once "dbh.inc.php";
 include_once "variables.inc.php";
 
+function debug_to_console($data) {
+
+    if (is_array($data)) {
+        $output = "<script>console.log( 'Debug Objects: " . implode(',', $data) . "' );</script>";
+    } else {
+        $output = "<script>console.log( 'Debug Objects: " . $data . "' );</script>";
+
+        echo $output;
+    }
+}
+
 Class Purchases {
 
     protected $postdata;
@@ -60,6 +71,8 @@ Class Purchases {
             unset($dimension_array[$hexKey]);
             $dimension_array = array_values($dimension_array);
             $hexCheck = TRUE;
+
+            $qrext = "";
         } else {
             $hexCheck = FALSE;
         }
@@ -73,9 +86,13 @@ Class Purchases {
         //delete all texts from dimension array, and return numbers only
         $replace_array = array("hex", "dia,", "dia;", "dia:", "dia.", "dia", "mm"); //--> to lists what need to be replaced.
         $newDimensionArray = str_replace($replace_array, "", $dimension_array); //--> replaces the text
-        #	print_r($newDimensionArray);
-        #	echo "<br>";
+//        print_r($newDimensionArray);
+//        echo "<br>";
         if ($diaCheck) {
+            $thickness = floatval($newDimensionArray['0']); //diameter
+            $length = floatval($newDimensionArray['1']); //length
+            $qrext = "";
+        } elseif ($hexCheck) {
             $thickness = floatval($newDimensionArray['0']); //diameter
             $length = floatval($newDimensionArray['1']); //length
             $qrext = "";
@@ -87,16 +104,18 @@ Class Purchases {
         }
 
         //begin attaching each array to coresponding variables
+
         foreach ($purchase_array as $Pkey => $Pvalue) {
             $var = "var_" . $Pkey;
             ${$var} = $Pvalue;
+//            debug_to_console("$var => " . "$Pvalue");
         }
-
+        //print_r($purchase_array);
         //getDensity
         if ($var_is_shaft == 'no') {
             $density = floatval($var_plate);
         } else {
-            $density = floatval($var_shaft);
+            $density = floatval($var_plate);
         }
 
 
@@ -127,21 +146,22 @@ Class Purchases {
             case 'Rod':
                 switch ($shapecode) {
                     case 'O':
-                        if ($diaCheck) {
-                            if ($hexCheck) {
-                                //not yet implemented
-                                $errormsg = "not yet implemented";
-                                //implement by formular
-                                //$volume = Hexagon_Volume(hexagonArea($thickness), $length);
-                            } else {
-                                $radius = $thickness / 2;
-                                $area = pi() * ($radius ^ 2);
-                                $volume = $area * $length;
-                            }
-                            echo "length = $length, thick/dia = $thickness, denisty = $density <br>";
+
+                        if ($hexCheck) {
+                            //not yet implemented
+                            //$errormsg = "not yet implemented";
+                            //implement by formular
+                            $volume = Hexagon_Volume(hexagonArea($thickness), $length);
+                            echo "\$volume = $volume <br>";
+                        } elseif ($diaCheck) {
+                            $radius = $thickness / 2;
+                            $area = pi() * ($radius ^ 2);
+                            $volume = $area * $length;
                         } else {
 
                         }
+                        echo "length = $length, thick/dia = $thickness, denisty = $density <br>";
+
                         break;
                 }
                 break;
